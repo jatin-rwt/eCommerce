@@ -18,10 +18,16 @@ mongoose.connect(process.env.MONGOOSE_URL).then(() => {
 
 
 const databaseSeeder = require("./databaseSeeder");
+const userRoute = require("./routes/User");
+
+app.use(express.json());
 
 //database seeder routes
 app.use("/api/seed", databaseSeeder)
 
+
+//route for user
+app.use("/api/users", userRoute)
 
 app.listen(PORT || 9000, () => {
     console.log(`server started on port: ${PORT}`);
