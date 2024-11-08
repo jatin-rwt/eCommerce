@@ -19,6 +19,8 @@ mongoose.connect(process.env.MONGOOSE_URL).then(() => {
 
 const databaseSeeder = require("./databaseSeeder");
 const userRoute = require("./routes/User");
+const productRoute = require("./routes/Product");
+const orderRoute = require("./routes/Order");
 
 app.use(express.json());
 
@@ -28,6 +30,13 @@ app.use("/api/seed", databaseSeeder)
 
 //route for user
 app.use("/api/users", userRoute)
+
+//route for products
+app.use("/api/products", productRoute)
+
+
+//route for orders
+app.use("/api/orders", orderRoute)
 
 app.listen(PORT || 9000, () => {
     console.log(`server started on port: ${PORT}`);

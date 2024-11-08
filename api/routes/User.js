@@ -3,7 +3,8 @@ const userRoute = express.Router();
 const AsyncHandler = require("express-async-handler");
 const User = require("../models/User");
 const generateToken = require("../tokenGenerate")
-const protect = require("../middleware/Auth")
+const protect = require("../middleware/Auth");
+const { token } = require("morgan");
 
 userRoute.post("/login", AsyncHandler(
     async (req, res) => {
@@ -58,7 +59,7 @@ userRoute.post("/register", AsyncHandler( async(req, res) => {
 }))
 
 
-//profile data
+//get auth profile data
 userRoute.get("/profile", protect, AsyncHandler(async(req, res) => {
     const user = await User.findById(req.user._id);
     if(user){
@@ -72,6 +73,34 @@ userRoute.get("/profile", protect, AsyncHandler(async(req, res) => {
     }else {
         res.status(404);
         throw new Error("USER NOT FOUND");
+    }
+}))
+
+//user profile update
+userRoute.put("/profile", protect, AsyncHandler(async (req, res) => {
+    const user = await User.findById(req.user._id);
+    if(user){
+        user.name = req.body.name || user.name;
+        user.email = req.body.email || user.email;
+
+        if(req.body.password){
+            user.password = req.body.password;
+        }
+
+        const updatedUser = await user.save();
+        res.json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            isAdmin: updatedUser.isAdmin,
+            createdAt: updatedUser.createdAt,
+            token: generateToken(updatedUser._id) ,
+        })
+
+
+    }else{
+        res.status(404);
+        throw new Error("User not found");
     }
 }))
 
