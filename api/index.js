@@ -5,6 +5,8 @@ dotenv.config();
 
 const PORT = process.env.PORT;
 
+const cors = require("cors");
+
 const mongoose = require("mongoose");
 //connect to db
 mongoose.connect(process.env.MONGOOSE_URL).then(() => {
@@ -24,6 +26,8 @@ const orderRoute = require("./routes/Order");
 
 app.use(express.json());
 
+app.use(cors())
+
 //database seeder routes
 app.use("/api/seed", databaseSeeder)
 
@@ -38,6 +42,9 @@ app.use("/api/products", productRoute)
 //route for orders
 app.use("/api/orders", orderRoute)
 
+app.get('/', (req, res) => {
+    res.send('Hello, World!');
+  });
 app.listen(PORT || 9000, () => {
     console.log(`server started on port: ${PORT}`);
 })
